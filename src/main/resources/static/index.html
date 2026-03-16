@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная - КВД</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-title">КВД</div>
+        <div class="sidebar-subtitle">Информационная система</div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" class="active">
+                <span class="icon">🏠</span> Главная
+            </a>
+            <a href="patient-form.html">
+                <span class="icon">📝</span> Ввод данных
+            </a>
+            <a href="patient-search.html">
+                <span class="icon">🔍</span> Поиск пациентов
+            </a>
+            <a href="reports.html">
+                <span class="icon">📊</span> Отчёты
+            </a>
+            <a href="#" class="submenu-toggle collapsed" onclick="toggleSubmenu(this)">
+                <span><span class="icon">📚</span> Справочники</span>
+            </a>
+            <div class="submenu collapsed">
+                <a href="dictionaries.html?dict=genders" data-dict="genders">Пол</a>
+                <a href="dictionaries.html?dict=diagnosis-groups" data-dict="diagnosis-groups">Группы диагнозов</a>
+                <a href="dictionaries.html?dict=diagnoses" data-dict="diagnoses">Диагнозы</a>
+                <a href="dictionaries.html?dict=branches" data-dict="branches">Филиалы</a>
+                <a href="dictionaries.html?dict=departments" data-dict="departments">Отделения</a>
+                <a href="dictionaries.html?dict=doctors" data-dict="doctors">Врачи</a>
+                <a href="dictionaries.html?dict=state-groups" data-dict="state-groups">Группы районов</a>
+                <a href="dictionaries.html?dict=states" data-dict="states">Районы</a>
+                <a href="dictionaries.html?dict=places" data-dict="places">Места выявления</a>
+                <a href="dictionaries.html?dict=profiles" data-dict="profiles">Профили</a>
+                <a href="dictionaries.html?dict=inspections" data-dict="inspections">Типы осмотра</a>
+                <a href="dictionaries.html?dict=transfers" data-dict="transfers">Пути передачи</a>
+                <a href="dictionaries.html?dict=citizen-categories" data-dict="citizen-categories">Категории проживания</a>
+                <a href="dictionaries.html?dict=citizen-types" data-dict="citizen-types">Типы нас. пунктов</a>
+                <a href="dictionaries.html?dict=social-groups" data-dict="social-groups">Соц. группы</a>
+                <a href="dictionaries.html?dict=lab-test-types" data-dict="lab-test-types">Лаб. тесты</a>
+                <a href="dictionaries.html?dict=population" data-dict="population">Население</a>
+            </div>
+            <a href="users.html" id="navUsers" style="display:none;">
+                <span class="icon">👥</span> Пользователи
+            </a>
+            <a href="audit-log.html" id="navAuditLog" style="display:none;">
+                <span class="icon">📜</span> Журнал действий
+            </a>
+            <a href="settings.html">
+                <span class="icon">⚙️</span> Настройки
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <span>👤</span>
+                <span id="currentUserName">...</span>
+            </div>
+            <div class="sidebar-exit" onclick="logout()">
+                <span>🚪</span> Выход
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <div class="page-header">
+            <h1 class="page-title">Главная</h1>
+        </div>
+
+        <!-- Карточки со статистикой -->
+        <div class="dashboard-cards" id="statsCards">
+            <div class="dash-card">
+                <div class="dash-card-icon">👥</div>
+                <div class="dash-card-value" id="statPatients">—</div>
+                <div class="dash-card-label">Пациентов</div>
+            </div>
+            <div class="dash-card">
+                <div class="dash-card-icon">📋</div>
+                <div class="dash-card-value" id="statCases">—</div>
+                <div class="dash-card-label">Всего случаев</div>
+            </div>
+            <div class="dash-card">
+                <div class="dash-card-icon">📅</div>
+                <div class="dash-card-value" id="statMonth">—</div>
+                <div class="dash-card-label">За текущий месяц</div>
+            </div>
+            <div class="dash-card">
+                <div class="dash-card-icon">📆</div>
+                <div class="dash-card-value" id="statYear">—</div>
+                <div class="dash-card-label">За текущий год</div>
+            </div>
+        </div>
+
+        <!-- Распределение по группам диагнозов -->
+        <section class="card" style="margin-top: 20px;">
+            <h2 class="card-title">Распределение по заболеваниям (текущий год)</h2>
+            <div id="diagnosisDistribution">
+                <div class="loading"><div class="spinner"></div></div>
+            </div>
+        </section>
+
+        <!-- График динамики по месяцам -->
+        <section class="card" style="margin-top: 20px;">
+            <h2 class="card-title">Динамика заболеваемости по месяцам (текущий год)</h2>
+            <div style="position: relative; height: 300px;">
+                <canvas id="monthlyChart"></canvas>
+            </div>
+        </section>
+
+
+
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>
