@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ввод данных - КВД</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-title">КВД</div>
+        <div class="sidebar-subtitle">Информационная система</div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html">
+                <span class="icon">🏠</span> Главная
+            </a>
+            <a href="patient-form.html" class="active">
+                <span class="icon">📝</span> Ввод данных
+            </a>
+            <a href="patient-search.html">
+                <span class="icon">🔍</span> Поиск пациентов
+            </a>
+            <a href="reports.html">
+                <span class="icon">📊</span> Отчёты
+            </a>
+            <a href="#" class="submenu-toggle collapsed" onclick="toggleSubmenu(this)">
+                <span><span class="icon">📚</span> Справочники</span>
+            </a>
+            <div class="submenu collapsed">
+                <a href="dictionaries.html?dict=genders" data-dict="genders">Пол</a>
+                <a href="dictionaries.html?dict=diagnosis-groups" data-dict="diagnosis-groups">Группы диагнозов</a>
+                <a href="dictionaries.html?dict=diagnoses" data-dict="diagnoses">Диагнозы</a>
+                <a href="dictionaries.html?dict=branches" data-dict="branches">Филиалы</a>
+                <a href="dictionaries.html?dict=departments" data-dict="departments">Отделения</a>
+                <a href="dictionaries.html?dict=doctors" data-dict="doctors">Врачи</a>
+                <a href="dictionaries.html?dict=state-groups" data-dict="state-groups">Группы районов</a>
+                <a href="dictionaries.html?dict=states" data-dict="states">Районы</a>
+                <a href="dictionaries.html?dict=places" data-dict="places">Места выявления</a>
+                <a href="dictionaries.html?dict=profiles" data-dict="profiles">Профили</a>
+                <a href="dictionaries.html?dict=inspections" data-dict="inspections">Типы осмотра</a>
+                <a href="dictionaries.html?dict=transfers" data-dict="transfers">Пути передачи</a>
+                <a href="dictionaries.html?dict=citizen-categories" data-dict="citizen-categories">Категории проживания</a>
+                <a href="dictionaries.html?dict=citizen-types" data-dict="citizen-types">Типы нас. пунктов</a>
+                <a href="dictionaries.html?dict=social-groups" data-dict="social-groups">Соц. группы</a>
+                <a href="dictionaries.html?dict=lab-test-types" data-dict="lab-test-types">Лаб. тесты</a>
+                <a href="dictionaries.html?dict=population" data-dict="population">Население</a>
+            </div>
+            <a href="users.html" id="navUsers" style="display:none;">
+                <span class="icon">👥</span> Пользователи
+            </a>
+            <a href="audit-log.html" id="navAuditLog" style="display:none;">
+                <span class="icon">📜</span> Журнал действий
+            </a>
+            <a href="settings.html">
+                <span class="icon">⚙️</span> Настройки
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <span>👤</span>
+                <span id="currentUserName">...</span>
+            </div>
+            <div class="sidebar-exit" onclick="logout()">
+                <span>🚪</span> Выход
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <div class="page-header">
+            <h1 class="page-title">Добавление случая заболевания</h1>
+        </div>
+
+        <!-- Данные пациента -->
+        <section class="card">
+            <h2 class="card-title">👤 Данные пациента</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="required">Фамилия</label>
+                    <input type="text" id="lastName" placeholder="Введите фамилию">
+                </div>
+                <div class="form-group">
+                    <label class="required">Имя</label>
+                    <input type="text" id="firstName" placeholder="Введите имя">
+                </div>
+                <div class="form-group">
+                    <label>Отчество</label>
+                    <input type="text" id="middleName" placeholder="Введите отчество">
+                </div>
+                <div class="form-group">
+                    <label class="required">Пол</label>
+                    <select id="gender">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Дата рождения</label>
+                    <input type="date" id="birthDate">
+                </div>
+                <div class="form-group">
+                    <label>Адрес</label>
+                    <input type="text" id="address" placeholder="Введите адрес">
+                </div>
+            </div>
+        </section>
+
+        <!-- Социальные данные -->
+        <section class="card">
+            <h2 class="card-title">🏠 Социальные данные</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="required">Категория проживания</label>
+                    <select id="citizenCategory">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Тип населённого пункта</label>
+                    <select id="citizenType">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Район</label>
+                    <select id="state">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Социальная группа</label>
+                    <select id="socialGroup">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Данные о заболевании -->
+        <section class="card">
+            <h2 class="card-title">🏥 Данные о заболевании</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="required">Диагноз</label>
+                    <select id="diagnosis">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Дата установления диагноза</label>
+                    <input type="date" id="diagnosisDate">
+                </div>
+                <div class="form-group">
+                    <label class="required">Врач</label>
+                    <select id="doctor">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Место выявления</label>
+                    <select id="place">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Профиль врача / койки</label>
+                    <select id="profile">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Осмотр</label>
+                    <select id="inspection">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Путь передачи</label>
+                    <select id="transfer">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <label class="checkbox-item" style="margin-top: 6px;">
+                        <input type="checkbox" id="isContact">
+                        <span>По контакту</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Лабораторные подтверждения -->
+        <section class="card">
+            <h2 class="card-title">🔬 Лабораторные подтверждения</h2>
+            
+            <div class="checkbox-grid" id="labTestsContainer">
+                <!-- Загружается динамически -->
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Кнопки действий -->
+        <div class="actions-right">
+            <button class="btn btn-secondary" onclick="cancelPatientForm()">Отмена</button>
+            <button class="btn btn-success" onclick="savePatientForm()">💾 Сохранить</button>
+        </div>
+
+    </main>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/address-autocomplete.js"></script>
+<script src="js/patient-form.js"></script>
+
+</body>
+</html>

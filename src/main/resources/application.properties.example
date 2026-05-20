@@ -1,0 +1,16 @@
+# Скопируй этот файл рядом с JAR и переименуй в application-local.properties
+# Заполни реальными значениями. Этот файл в git, application-local.properties — нет.
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/kvd_stat
+spring.datasource.username=postgres
+spring.datasource.password=пароль_от_БД
+
+# Windows: C:\\Program Files\\PostgreSQL\\18\\bin\\pg_dump.exe
+# Linux:   /usr/bin/pg_dump
+app.backup.pg-dump-path=pg_dump
+
+# Токен DaData: https://dadata.ru/profile/
+dadata.api.token=api_ключ
+
+# Пароль администратора при первом запуске
+app.admin.initial-password=пароль

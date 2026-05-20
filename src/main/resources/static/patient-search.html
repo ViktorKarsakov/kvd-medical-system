@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск пациентов - КВД</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-title">КВД</div>
+        <div class="sidebar-subtitle">Информационная система</div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html">
+                <span class="icon">🏠</span> Главная
+            </a>
+            <a href="patient-form.html">
+                <span class="icon">📝</span> Ввод данных
+            </a>
+            <a href="patient-search.html" class="active">
+                <span class="icon">🔍</span> Поиск пациентов
+            </a>
+            <a href="reports.html">
+                <span class="icon">📊</span> Отчёты
+            </a>
+            <a href="#" class="submenu-toggle collapsed" onclick="toggleSubmenu(this)">
+                <span><span class="icon">📚</span> Справочники</span>
+            </a>
+            <div class="submenu collapsed">
+                <a href="dictionaries.html?dict=genders">Пол</a>
+                <a href="dictionaries.html?dict=diagnosis-groups">Группы диагнозов</a>
+                <a href="dictionaries.html?dict=diagnoses">Диагнозы</a>
+                <a href="dictionaries.html?dict=branches">Филиалы</a>
+                <a href="dictionaries.html?dict=departments">Отделения</a>
+                <a href="dictionaries.html?dict=doctors">Врачи</a>
+                <a href="dictionaries.html?dict=state-groups">Группы районов</a>
+                <a href="dictionaries.html?dict=states">Районы</a>
+                <a href="dictionaries.html?dict=places">Места выявления</a>
+                <a href="dictionaries.html?dict=profiles">Профили</a>
+                <a href="dictionaries.html?dict=inspections">Типы осмотра</a>
+                <a href="dictionaries.html?dict=transfers">Пути передачи</a>
+                <a href="dictionaries.html?dict=citizen-categories">Категории проживания</a>
+                <a href="dictionaries.html?dict=citizen-types">Типы нас. пунктов</a>
+                <a href="dictionaries.html?dict=social-groups">Соц. группы</a>
+                <a href="dictionaries.html?dict=lab-test-types">Лаб. тесты</a>
+            </div>
+            <a href="users.html" id="navUsers" style="display:none;">
+                <span class="icon">👥</span> Пользователи
+            </a>
+            <a href="audit-log.html" id="navAuditLog" style="display:none;">
+                <span class="icon">📜</span> Журнал действий
+            </a>
+            <a href="settings.html">
+                <span class="icon">⚙️</span> Настройки
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <span>👤</span>
+                <span id="currentUserName">...</span>
+            </div>
+            <div class="sidebar-exit" onclick="logout()">
+                <span>🚪</span> Выход
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <div class="page-header">
+            <h1 class="page-title">Поиск пациентов</h1>
+        </div>
+
+        <!-- Фильтры -->
+        <section class="card" id="filtersCard">
+            <h2 class="card-title">🔎 Фильтры поиска</h2>
+            
+            <div class="form-grid-4">
+                <div class="form-group">
+                    <label>Фамилия</label>
+                    <input type="text" id="filterLastName" placeholder="Начните вводить...">
+                </div>
+                <div class="form-group">
+                    <label>Имя</label>
+                    <input type="text" id="filterFirstName" placeholder="Начните вводить...">
+                </div>
+                <div class="form-group">
+                    <label>Отчество</label>
+                    <input type="text" id="filterMiddleName" placeholder="Начните вводить...">
+                </div>
+                <div class="form-group">
+                    <label>Пол</label>
+                    <select id="filterGender">
+                        <option value="">Любой</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Район</label>
+                    <select id="filterState">
+                        <option value="">Любой</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Диагноз</label>
+                    <select id="filterDiagnosis">
+                        <option value="">Любой</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Группа диагнозов</label>
+                    <select id="filterDiagnosisGroup">
+                        <option value="">Любая</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Врач</label>
+                    <select id="filterDoctor">
+                        <option value="">Любой</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Соц. группа</label>
+                    <select id="filterSocialGroup">
+                        <option value="">Любая</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Возраст от</label>
+                    <input type="number" id="filterAgeFrom" min="0" max="150" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Возраст до</label>
+                    <input type="number" id="filterAgeTo" min="0" max="150" placeholder="150">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                </div>
+                <div class="form-group">
+                    <label>Дата учёта от</label>
+                    <input type="date" id="createdFrom">
+                </div>
+                <div class="form-group">
+                    <label>Дата учёта до</label>
+                    <input type="date" id="createdTo">
+                </div>
+            </div>
+
+            <div class="actions" style="margin-top: 20px; margin-bottom: 0;">
+                <button class="btn btn-primary" onclick="searchPatients()">🔍 Поиск</button>
+                <button class="btn btn-secondary" onclick="resetFilters()">Сбросить</button>
+            </div>
+        </section>
+
+        <!-- Результаты -->
+        <section class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2 class="card-title" style="margin-bottom: 0;">📋 Результаты поиска</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-secondary btn-sm" id="btnExportExcel" onclick="exportToExcel()" disabled>
+                        📥 Скачать Excel
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="btnViewPatient" onclick="viewPatientDetails()" disabled>
+                        Просмотр
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Фамилия</th>
+                            <th>Имя</th>
+                            <th>Отчество</th>
+                            <th>Пол</th>
+                            <th>Дата рождения</th>
+                            <th>Район</th>
+                            <th>Диагноз</th>
+                            <th>Дата диагноза</th>
+                            <th>Врач</th>
+                            <th>Дата учёта</th>
+                        </tr>
+                    </thead>
+                    <tbody id="searchResults">
+                        <tr>
+                            <td colspan="10">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">🔍</div>
+                                    <p>Введите параметры поиска и нажмите "Поиск"</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="pagination"></div>
+        </section>
+
+    </main>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/patient-search.js"></script>
+
+</body>
+</html>

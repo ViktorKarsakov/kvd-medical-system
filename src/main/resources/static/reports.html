@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчёты - КВД</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR (такой же, как на всех страницах) -->
+    <aside class="sidebar">
+        <div class="sidebar-title">КВД</div>
+        <div class="sidebar-subtitle">Информационная система</div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html">
+                <span class="icon">🏠</span> Главная
+            </a>
+            <a href="patient-form.html">
+                <span class="icon">📝</span> Ввод данных
+            </a>
+            <a href="patient-search.html">
+                <span class="icon">🔍</span> Поиск пациентов
+            </a>
+            <a href="reports.html" class="active">
+                <span class="icon">📊</span> Отчёты
+            </a>
+            <a href="#" class="submenu-toggle collapsed" onclick="toggleSubmenu(this)">
+                <span><span class="icon">📚</span> Справочники</span>
+            </a>
+            <div class="submenu collapsed">
+                <a href="dictionaries.html?dict=genders" data-dict="genders">Пол</a>
+                <a href="dictionaries.html?dict=diagnosis-groups" data-dict="diagnosis-groups">Группы диагнозов</a>
+                <a href="dictionaries.html?dict=diagnoses" data-dict="diagnoses">Диагнозы</a>
+                <a href="dictionaries.html?dict=branches" data-dict="branches">Филиалы</a>
+                <a href="dictionaries.html?dict=departments" data-dict="departments">Отделения</a>
+                <a href="dictionaries.html?dict=doctors" data-dict="doctors">Врачи</a>
+                <a href="dictionaries.html?dict=state-groups" data-dict="state-groups">Группы районов</a>
+                <a href="dictionaries.html?dict=states" data-dict="states">Районы</a>
+                <a href="dictionaries.html?dict=places" data-dict="places">Места выявления</a>
+                <a href="dictionaries.html?dict=profiles" data-dict="profiles">Профили</a>
+                <a href="dictionaries.html?dict=inspections" data-dict="inspections">Типы осмотра</a>
+                <a href="dictionaries.html?dict=transfers" data-dict="transfers">Пути передачи</a>
+                <a href="dictionaries.html?dict=citizen-categories" data-dict="citizen-categories">Категории проживания</a>
+                <a href="dictionaries.html?dict=citizen-types" data-dict="citizen-types">Типы нас. пунктов</a>
+                <a href="dictionaries.html?dict=social-groups" data-dict="social-groups">Соц. группы</a>
+                <a href="dictionaries.html?dict=lab-test-types" data-dict="lab-test-types">Лаб. тесты</a>
+                <a href="dictionaries.html?dict=population" data-dict="population">Население</a>
+            </div>
+            <a href="users.html" id="navUsers" style="display:none;">
+                <span class="icon">👥</span> Пользователи
+            </a>
+            <a href="audit-log.html" id="navAuditLog" style="display:none;">
+                <span class="icon">📜</span> Журнал действий
+            </a>
+            <a href="settings.html">
+                <span class="icon">⚙️</span> Настройки
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <span>👤</span>
+                <span id="currentUserName">...</span>
+            </div>
+            <div class="sidebar-exit" onclick="logout()">
+                <span>🚪</span> Выход
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <div class="page-header">
+            <h1 class="page-title">Формирование отчётов</h1>
+        </div>
+
+        <!-- Параметры отчёта -->
+        <section class="card">
+            <h2 class="card-title">📋 Параметры отчёта</h2>
+
+            <div class="form-grid">
+
+                <!-- Тип отчёта -->
+                <div class="form-group">
+                    <label class="required">Тип отчёта</label>
+                    <select id="reportType" onchange="onReportTypeChange()">
+                        <option value="">Выберите...</option>
+                        <optgroup label="Структура заболеваемости">
+                            <option value="structure">Структура заболеваемости</option>
+                        </optgroup>
+                        <optgroup label="Сводные отчёты">
+                            <option value="indicators">Показатели заболеваемости</option>
+                            <option value="per100k">ИППП на 100 тыс. населения</option>
+                            <option value="ippp_details">Сведения о заболеваниях ИППП</option>
+                        </optgroup>
+                        <optgroup label="Списки и подробности">
+                            <option value="doctor_patients">Список больных по врачам</option>
+                            <option value="detailed">Подробный отчёт по заболеванию</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Группа диагнозов (показывается не для всех отчётов) -->
+                <div class="form-group" id="diagnosisGroupBlock">
+                    <label class="required">Группа диагнозов</label>
+                    <select id="diagnosisGroupId">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+
+                <!-- Пустое место для выравнивания grid -->
+                <div class="form-group" id="spacer"></div>
+
+                <!-- Дата начала периода -->
+                <div class="form-group">
+                    <label class="required">Дата начала</label>
+                    <input type="date" id="dateFrom">
+                </div>
+
+                <!-- Дата окончания периода -->
+                <div class="form-group">
+                    <label class="required">Дата окончания</label>
+                    <input type="date" id="dateTo">
+                </div>
+
+            </div>
+
+            <!-- Фильтр по району -->
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                <label style="font-size: 13px; font-weight: 500; color: #4b5563; margin-bottom: 10px; display: block;">Фильтр по району <span style="color: #ef4444;">*</span></label>
+                <div class="region-filter">
+                    <label class="region-option">
+                        <input type="radio" name="regionFilter" value="ALL">
+                        <span>Край</span>
+                    </label>
+                    <label class="region-option">
+                        <input type="radio" name="regionFilter" value="CITY" checked>
+                        <span>Красноярск</span>
+                    </label>
+                    <label class="region-option">
+                        <input type="radio" name="regionFilter" value="STATE">
+                        <span>Район</span>
+                    </label>
+                    <div id="stateBlock" style="display: none;">
+                        <select id="stateId" style="min-width: 250px;">
+                            <option value="">Выберите район...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Описание выбранного отчёта (появляется при выборе типа) -->
+            <div id="reportDescription" style="display: none; margin-top: 20px; padding: 14px 16px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bae6fd;">
+                <p id="reportDescriptionText" style="margin: 0; color: #0369a1; font-size: 13px;">💡 </p>
+            </div>
+
+            <!-- Кнопка формирования -->
+            <div class="actions-right" style="margin-top: 24px;">
+                <button class="btn btn-primary" id="generateBtn" onclick="generateReport()" disabled>
+                    📊 Сформировать отчёт
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/reports.js"></script>
+
+</body>
+</html>

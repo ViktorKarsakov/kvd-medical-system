@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пользователи - КВД</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-title">КВД</div>
+        <div class="sidebar-subtitle">Информационная система</div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html">
+                <span class="icon">🏠</span> Главная
+            </a>
+            <a href="patient-form.html">
+                <span class="icon">📝</span> Ввод данных
+            </a>
+            <a href="patient-search.html">
+                <span class="icon">🔍</span> Поиск пациентов
+            </a>
+            <a href="reports.html">
+                <span class="icon">📊</span> Отчёты
+            </a>
+            <a href="#" class="submenu-toggle collapsed" onclick="toggleSubmenu(this)">
+                <span><span class="icon">📚</span> Справочники</span>
+            </a>
+            <div class="submenu collapsed">
+                <a href="dictionaries.html?dict=genders" data-dict="genders">Пол</a>
+                <a href="dictionaries.html?dict=diagnosis-groups" data-dict="diagnosis-groups">Группы диагнозов</a>
+                <a href="dictionaries.html?dict=diagnoses" data-dict="diagnoses">Диагнозы</a>
+                <a href="dictionaries.html?dict=branches" data-dict="branches">Филиалы</a>
+                <a href="dictionaries.html?dict=departments" data-dict="departments">Отделения</a>
+                <a href="dictionaries.html?dict=doctors" data-dict="doctors">Врачи</a>
+                <a href="dictionaries.html?dict=state-groups" data-dict="state-groups">Группы районов</a>
+                <a href="dictionaries.html?dict=states" data-dict="states">Районы</a>
+                <a href="dictionaries.html?dict=places" data-dict="places">Места выявления</a>
+                <a href="dictionaries.html?dict=profiles" data-dict="profiles">Профили</a>
+                <a href="dictionaries.html?dict=inspections" data-dict="inspections">Типы осмотра</a>
+                <a href="dictionaries.html?dict=transfers" data-dict="transfers">Пути передачи</a>
+                <a href="dictionaries.html?dict=citizen-categories" data-dict="citizen-categories">Категории проживания</a>
+                <a href="dictionaries.html?dict=citizen-types" data-dict="citizen-types">Типы нас. пунктов</a>
+                <a href="dictionaries.html?dict=social-groups" data-dict="social-groups">Соц. группы</a>
+                <a href="dictionaries.html?dict=lab-test-types" data-dict="lab-test-types">Лаб. тесты</a>
+                <a href="dictionaries.html?dict=population" data-dict="population">Население</a>
+            </div>
+            <a href="users.html" id="navUsers" style="display:none;">
+                <span class="icon">👥</span> Пользователи
+            </a>
+            <a href="audit-log.html" id="navAuditLog" style="display:none;">
+                <span class="icon">📜</span> Журнал действий
+            </a>
+            <a href="settings.html">
+                <span class="icon">⚙️</span> Настройки
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <span>👤</span>
+                <span id="currentUserName">...</span>
+            </div>
+            <div class="sidebar-exit" onclick="logout()">
+                <span>🚪</span> Выход
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <div class="page-header">
+            <h1 class="page-title">Управление пользователями</h1>
+            <button class="btn btn-primary" onclick="openCreateModal()">+ Новый пользователь</button>
+        </div>
+
+        <!-- Таблица пользователей -->
+        <div class="card">
+            <table class="data-table" id="usersTable">
+                <thead>
+                    <tr>
+                        <th>Логин</th>
+                        <th>ФИО</th>
+                        <th>Роль</th>
+                        <th>Статус</th>
+                        <th>Создан</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Модал: создание пользователя -->
+        <div class="modal-overlay" id="createUserModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Новый пользователь</h2>
+                    <button class="modal-close" onclick="closeModal('createUserModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="createUserForm">
+                        <div class="form-group">
+                            <label>Логин *</label>
+                            <input type="text" name="username" required placeholder="Например: ivanov">
+                        </div>
+                        <div class="form-group">
+                            <label>Пароль *</label>
+                            <input type="password" name="password" required placeholder="Минимум 4 символа">
+                        </div>
+                        <div class="form-group">
+                            <label>ФИО *</label>
+                            <input type="text" name="fullName" required placeholder="Иванов Иван Викторович">
+                        </div>
+                        <div class="form-group">
+                            <label>Роль *</label>
+                            <select name="role" required>
+                                <option value="OPERATOR">Оператор</option>
+                                <option value="ADMIN">Администратор</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" onclick="closeModal('createUserModal')">Отмена</button>
+                    <button class="btn btn-primary" onclick="createUser()">Создать</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модал: сброс пароля -->
+        <div class="modal-overlay" id="resetPasswordModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Сброс пароля</h2>
+                    <button class="modal-close" onclick="closeModal('resetPasswordModal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="resetPasswordInfo" style="margin-bottom:16px; color:#6b7280;"></p>
+                    <form id="resetPasswordForm">
+                        <input type="hidden" name="userId" id="resetUserId">
+                        <div class="form-group">
+                            <label>Новый пароль *</label>
+                            <input type="password" name="newPassword" required placeholder="Минимум 4 символа">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" onclick="closeModal('resetPasswordModal')">Отмена</button>
+                    <button class="btn btn-primary" onclick="resetPassword()">Сбросить</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/users.js"></script>
+
+</body>
+</html>

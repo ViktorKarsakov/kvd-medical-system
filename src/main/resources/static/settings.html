@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки - КВД</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-title">КВД</div>
+        <div class="sidebar-subtitle">Информационная система</div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html">
+                <span class="icon">🏠</span> Главная
+            </a>
+            <a href="patient-form.html">
+                <span class="icon">📝</span> Ввод данных
+            </a>
+            <a href="patient-search.html">
+                <span class="icon">🔍</span> Поиск пациентов
+            </a>
+            <a href="reports.html">
+                <span class="icon">📊</span> Отчёты
+            </a>
+            <a href="#" class="submenu-toggle collapsed" onclick="toggleSubmenu(this)">
+                <span><span class="icon">📚</span> Справочники</span>
+            </a>
+            <div class="submenu collapsed">
+                <a href="dictionaries.html?dict=genders" data-dict="genders">Пол</a>
+                <a href="dictionaries.html?dict=diagnosis-groups" data-dict="diagnosis-groups">Группы диагнозов</a>
+                <a href="dictionaries.html?dict=diagnoses" data-dict="diagnoses">Диагнозы</a>
+                <a href="dictionaries.html?dict=branches" data-dict="branches">Филиалы</a>
+                <a href="dictionaries.html?dict=departments" data-dict="departments">Отделения</a>
+                <a href="dictionaries.html?dict=doctors" data-dict="doctors">Врачи</a>
+                <a href="dictionaries.html?dict=state-groups" data-dict="state-groups">Группы районов</a>
+                <a href="dictionaries.html?dict=states" data-dict="states">Районы</a>
+                <a href="dictionaries.html?dict=places" data-dict="places">Места выявления</a>
+                <a href="dictionaries.html?dict=profiles" data-dict="profiles">Профили</a>
+                <a href="dictionaries.html?dict=inspections" data-dict="inspections">Типы осмотра</a>
+                <a href="dictionaries.html?dict=transfers" data-dict="transfers">Пути передачи</a>
+                <a href="dictionaries.html?dict=citizen-categories" data-dict="citizen-categories">Категории проживания</a>
+                <a href="dictionaries.html?dict=citizen-types" data-dict="citizen-types">Типы нас. пунктов</a>
+                <a href="dictionaries.html?dict=social-groups" data-dict="social-groups">Соц. группы</a>
+                <a href="dictionaries.html?dict=lab-test-types" data-dict="lab-test-types">Лаб. тесты</a>
+                <a href="dictionaries.html?dict=population" data-dict="population">Население</a>
+            </div>
+            <a href="users.html" id="navUsers" style="display:none;">
+                <span class="icon">👥</span> Пользователи
+            </a>
+            <a href="audit-log.html" id="navAuditLog" style="display:none;">
+                <span class="icon">📜</span> Журнал действий
+            </a>
+            <a href="settings.html" class="active">
+                <span class="icon">⚙️</span> Настройки
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <span>👤</span>
+                <span id="currentUserName">...</span>
+            </div>
+            <div class="sidebar-exit" onclick="logout()">
+                <span>🚪</span> Выход
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <div class="page-header">
+            <h1 class="page-title">Настройки</h1>
+        </div>
+
+        <!-- Информация о пользователе -->
+        <section class="card">
+            <h2 class="card-title">👤 Профиль</h2>
+            <div class="settings-info">
+                <div class="settings-info-row">
+                    <span class="settings-label">Логин:</span>
+                    <span class="settings-value" id="settingsUsername">—</span>
+                </div>
+                <div class="settings-info-row">
+                    <span class="settings-label">Роль:</span>
+                    <span class="settings-value" id="settingsRole">—</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Смена пароля -->
+        <section class="card" style="margin-top: 20px;">
+            <h2 class="card-title">🔒 Смена пароля</h2>
+
+            <div class="settings-form">
+                <div class="form-group">
+                    <label class="required">Текущий пароль</label>
+                    <input type="password" id="oldPassword" placeholder="Введите текущий пароль" autocomplete="current-password">
+                </div>
+                <div class="form-group">
+                    <label class="required">Новый пароль</label>
+                    <input type="password" id="newPassword" placeholder="Введите новый пароль" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label class="required">Повторите новый пароль</label>
+                    <input type="password" id="confirmPassword" placeholder="Повторите новый пароль" autocomplete="new-password">
+                </div>
+                <div style="margin-top: 16px;">
+                    <button class="btn btn-success" onclick="changePassword()">Сменить пароль</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Резервная копия БД (только для ADMIN) -->
+        <section class="card" style="margin-top: 20px; display: none;" id="backupSection">
+            <h2 class="card-title">💾 Резервная копия базы данных</h2>
+            <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">
+                Скачать полную копию базы данных в формате SQL.
+                Файл можно использовать для восстановления через pgAdmin или psql.
+            </p>
+            <button class="btn btn-primary" onclick="downloadBackup()" id="btnBackup">
+                📥 Скачать бэкап
+            </button>
+        </section>
+
+        <!-- Информация о системе (видна всем) -->
+        <section class="card" style="margin-top: 20px;">
+            <h2 class="card-title">ℹ️ О системе</h2>
+            <div class="settings-info">
+                <div class="settings-info-row">
+                    <span class="settings-label">Название:</span>
+                    <span class="settings-value">КВД — Информационная система</span>
+                </div>
+                <div class="settings-info-row">
+                    <span class="settings-label">Версия:</span>
+                    <span class="settings-value">1.0.0</span>
+                </div>
+                <div class="settings-info-row">
+                    <span class="settings-label">Платформа:</span>
+                    <span class="settings-value">Spring Boot + PostgreSQL</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/settings.js"></script>
+
+</body>
+</html>
