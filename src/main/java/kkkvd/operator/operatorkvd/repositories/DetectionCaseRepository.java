@@ -87,4 +87,6 @@ public interface DetectionCaseRepository extends JpaRepository<DetectionCase, Lo
     List<Object[]> countByMonthBetween(
             @Param("dateFrom") LocalDate dateFrom,
             @Param("dateTo") LocalDate dateTo);
+
+    boolean existsByPatientIdAndDiagnosisIdAndDiagnosisDate(Long patientId, Long diagnosisId, LocalDate date);
 }

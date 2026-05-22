@@ -172,6 +172,21 @@ public class DetectionCaseService {
     }
 
     private DetectionCase createCaseInternal(Patient patient, CreateCaseForPatientRequest request, String username) {
+
+        //существует ли в БД запись с таким же patientId + diagnosisId + diagnosisDate
+        boolean isDuplicate = detectionCaseRepository.existsByPatientIdAndDiagnosisIdAndDiagnosisDate(
+                patient.getId(),
+                request.getDiagnosisId(),
+                request.getDiagnosisDate()
+        );
+
+        // Если дубль найден — прерываем выполнение и возвращаем ошибку 409 Conflict
+        if (isDuplicate) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "У пациента уже есть случай с таким диагнозом на эту дату"
+            );
+        }
+
         DetectionCase detectionCase = new DetectionCase();
         detectionCase.setPatient(patient);
 

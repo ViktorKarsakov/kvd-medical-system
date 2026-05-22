@@ -223,6 +223,24 @@
  </main>
 </div>
 
+
+<!-- Модальное окно предупреждения (дата рождения / несовершеннолетний) -->
+<div class="modal-overlay" id="warningModal">
+    <div class="modal" style="max-width: 460px;">
+        <div class="modal-header">
+            <h3>Внимание</h3>
+            <button class="modal-close" onclick="warningModalResolve(false)">×</button>
+        </div>
+        <div class="modal-body">
+            <p id="warningModalText" style="margin: 0; font-size: 14px; line-height: 1.6; color: #374151;"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="warningModalResolve(false)">Исправить</button>
+            <button class="btn btn-primary" onclick="warningModalResolve(true)">Продолжить</button>
+        </div>
+    </div>
+</div>
+
 <script src="js/common.js"></script>
 <script src="js/address-autocomplete.js"></script>
 <script src="js/patient-form.js"></script>
