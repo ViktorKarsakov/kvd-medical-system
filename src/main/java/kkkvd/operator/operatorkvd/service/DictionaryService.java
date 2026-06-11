@@ -100,7 +100,7 @@ public class DictionaryService {
     }
 
     public List<Population> getAllPopulations() {
-        return populationRepository.findAll();
+        return populationRepository.findAllByOrderByYearDescStateNameAsc();
     }
 
     //created
@@ -187,6 +187,10 @@ public class DictionaryService {
 
     @Transactional
     public Population createPopulation(Population population) {
+        if (population.getState() != null && population.getState().getId() != null) {
+            State state = stateRepository.getReferenceById(population.getState().getId());
+            population.setState(state);
+        }
         return populationRepository.save(population);
     }
 
@@ -329,7 +333,10 @@ public class DictionaryService {
     public Population updatePopulation(Long id, Population population) {
         Population existing = populationRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Запись не найдена"));
-        existing.setState(population.getState());
+        if (population.getState() != null && population.getState().getId() != null) {
+            State state = stateRepository.getReferenceById(population.getState().getId());
+            existing.setState(state);
+        }
         existing.setYear(population.getYear());
         existing.setCountAll(population.getCountAll());
         return populationRepository.save(existing);

@@ -7,6 +7,7 @@ import kkkvd.operator.operatorkvd.util.DoctorNameFormatter;
 import kkkvd.operator.operatorkvd.util.NameUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReportService {
     private final DetectionCaseRepository detectionCaseRepository;
     private final DiagnosisRepository diagnosisRepository;
@@ -34,6 +36,24 @@ public class ReportService {
             "CHLAMYDIA", "HERPES", "CONDYLOMAS", "MYCOSES", "MICROSPORIA"
     };
     private static final String SYPHILIS_CODE = "SYPHILIS";
+
+    // Загружает карту "id района → численность населения" для указанного года.
+    private Map<Long, Integer> loadPopulationMap(int year) {
+        List<Population> populations = populationRepository.findByYear(year);
+        if (populations.isEmpty()) {
+            Optional<Integer> latestYear = populationRepository.findLatestYear();
+            if (latestYear.isPresent()) {
+                populations = populationRepository.findByYear(latestYear.get());
+            }
+        }
+
+        Map<Long, Integer> popByState = new HashMap<>();
+        for (Population p : populations) {
+            popByState.put(p.getState().getId(), p.getCountAll());
+        }
+        return popByState;
+    }
+
     private static final String[] PER100K_GROUP_CODES = {
             "SYPHILIS", "GONORRHEA", "SCABIES", "MICROSPORIA", "MYCOSES"
     };
@@ -230,10 +250,7 @@ public class ReportService {
 
         int year = request.getDateFrom().getYear();
 
-        Map<Long, Integer> popByState = new HashMap<>();
-        for (Population p : populationRepository.findByYear(year)) {
-            popByState.put(p.getState().getId(), p.getCountAll());
-        }
+        Map<Long, Integer> popByState = loadPopulationMap(year);
 
         Map<String, List<DetectionCase>> byDistrict = cases.stream()
                 .collect(Collectors.groupingBy(c -> c.getState().getName(), LinkedHashMap::new, Collectors.toList()));
@@ -377,6 +394,7 @@ public class ReportService {
         boolean hasProfile = GROUPS_WITH_PROFILE_SECTION.contains(groupCode);
         int totalCount = cases.size();
         int year = request.getDateFrom().getYear();
+        Map<Long, Integer> populationMap = loadPopulationMap(year);
         Long gId = request.getDiagnosisGroupId();
 
         Map<String, List<Map<String, Object>>> sections = new LinkedHashMap<>();
@@ -393,12 +411,12 @@ public class ReportService {
         addSectionWithAgeSubs(sections, "Тип осмотра", cases, c -> c.getInspection().getName(), totalCount, isSyph, hasAgeSubs, gId);
 
         //Район проживания
-        sections.put("Район проживания", buildDistrictSection(cases, isSyph, year, gId));
+        sections.put("Район проживания", buildDistrictSection(cases, populationMap));
         if (hasAgeSubs) {
             var teens = filterByAge(cases, 15, 17);
             var kids = filterByAge(cases, 0, 14);
-            sections.put("Район проживания Подростки 15-17 лет", buildDistrictSection(teens, false, year, gId));
-            sections.put("Район проживания Дети 0-14 лет", buildDistrictSection(kids, false, year, gId));
+            sections.put("Район проживания Подростки 15-17 лет", buildDistrictSection(teens, populationMap));
+            sections.put("Район проживания Дети 0-14 лет", buildDistrictSection(kids, populationMap));
         }
         sections.put("Возрастная группа", buildAgeGroupSection(cases, isSyph, gId));
         return sections;
@@ -520,13 +538,7 @@ public class ReportService {
 
     /** Секция "Район проживания" с подытогами город/край */
     private List<Map<String, Object>> buildDistrictSection(
-            List<DetectionCase> cases, boolean isSyph, int year,
-            Long diagGroupId) {
-
-        Map<Long, Integer> popByState = new HashMap<>();
-        for (Population p : populationRepository.findByYear(year)) {
-            popByState.put(p.getState().getId(), p.getCountAll());
-        }
+            List<DetectionCase> cases, Map<Long, Integer> popByState) {
 
         Map<String, List<DetectionCase>> byDistrict = cases.stream()
                 .collect(Collectors.groupingBy(

@@ -203,8 +203,8 @@ const dictionaryConfig = {
  endpoint: '/dictionaries/population',
  fields: [
  { name: 'state.id', label: 'Район', type: 'select', source: '/dictionaries/states', required: true },
- { name: 'year', label: 'Год', type: 'text', required: true },
- { name: 'countAll', label: 'Численность', type: 'text', required: true }
+ { name: 'year', label: 'Год', type: 'number', required: true, min: 2000, max: 2100 },
+        { name: 'countAll', label: 'Численность', type: 'number', required: true, min: 1 }
  ],
  columns: [
  { key: 'id', label: '#', width: '60px' },
@@ -370,7 +370,15 @@ async function generateModalForm() {
  html += '<option value="">Выберите...</option>';
  html += '</select>';
  } else {
- html += '<input type="text" id="field_' + field.name.replace('.', '_') + '" name="' + field.name + '" ' + (field.required ? 'required' : '') + '>';
+ // Используем тип поля из конфига: 'text', 'number' и т.д.
+    // Для числовых полей (year, countAll) это позволяет браузеру
+    // показывать числовую клавиатуру и блокировать ввод букв.
+    const inputType = (field.type && field.type !== 'select') ? field.type : 'text';
+    let attrs = 'type="' + inputType + '" id="field_' + field.name.replace('.', '_') + '" name="' + field.name + '" ';
+    if (field.required) attrs += 'required ';
+    if (field.min !== undefined) attrs += 'min="' + field.min + '" ';
+    if (field.max !== undefined) attrs += 'max="' + field.max + '" ';
+    html += '<input ' + attrs + '>';
  }
  
  html += '</div>';
@@ -466,8 +474,13 @@ async function saveDictRecord() {
  }
  data[parts[0]][parts[1]] = value ? parseInt(value) : null;
  } else {
- data[field.name] = value || null;
- }
+      // Для числовых полей (type: 'number') отправляем int, а не строку
+      if (field.type === 'number') {
+        data[field.name] = value ? parseInt(value, 10) : null;
+      } else {
+        data[field.name] = value || null;
+      }
+    }
  }
  
  try {
