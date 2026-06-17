@@ -120,8 +120,31 @@
  <canvas id="monthlyChart"></canvas>
  </div>
  </section>
+        <!-- ИППП: заголовок с выбором года + полоски -->
+        <section class="card" style="margin-top: 20px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                <h2 class="card-title" style="margin:0;">Распределение по ИППП</h2>
+                <select id="ipppYearSelect" onchange="onIpppYearChange()"
+                        style="padding:5px 10px; border:1px solid #d1d5db; border-radius:6px;
+                               font-size:13px; color:#374151; cursor:pointer; outline:none;">
+                    <option value="">Загрузка...</option>
+                </select>
+            </div>
+            <div id="ipppDistribution">
+                <div class="loading"><div class="spinner"></div></div>
+            </div>
+            <div style="font-size:12px; color:#9ca3af; text-align:right; padding-top:6px;">
+                Нажмите на заболевание для просмотра динамики
+            </div>
+        </section>
 
-
+        <!-- ИППП: динамика по месяцам (скрыта, появляется при клике) -->
+        <section class="card" id="ipppDynamicsSection" style="margin-top:20px; display:none;">
+            <h2 class="card-title" id="ipppDynamicsTitle">Динамика</h2>
+            <div style="position:relative; height:280px;">
+                <canvas id="ipppMonthlyChart"></canvas>
+            </div>
+        </section>
 
  </main>
 </div>

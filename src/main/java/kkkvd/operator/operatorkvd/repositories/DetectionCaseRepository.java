@@ -1,6 +1,7 @@
 package kkkvd.operator.operatorkvd.repositories;
 
 import kkkvd.operator.operatorkvd.entities.DetectionCase;
+import org.hibernate.cache.spi.SecondLevelCacheLogger;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -89,4 +90,31 @@ public interface DetectionCaseRepository extends JpaRepository<DetectionCase, Lo
             @Param("dateTo") LocalDate dateTo);
 
     boolean existsByPatientIdAndDiagnosisIdAndDiagnosisDate(Long patientId, Long diagnosisId, LocalDate date);
+
+    // Распределение случаев по ИППП-группам за период.
+    // Исключаем чесотку (SCABIES), микроспорию (MICROSPORIA), микозы (MYCOSES)
+    @Query("SELECT dg.name, dg.code, COUNT(dc) FROM DetectionCase dc " +
+            "JOIN dc.diagnosis d JOIN d.diagnosisGroup dg " +
+            "WHERE dc.diagnosisDate BETWEEN :dateFrom AND :dateTo " +
+            "AND dg.code NOT IN ('SCABIES', 'MICROSPORIA', 'MYCOSES') " +
+            "GROUP BY dg.name, dg.code ORDER BY COUNT(dc) DESC")
+    List<Object[]> countIpppByGroupBetween(
+            @Param("dateFrom") LocalDate dateFrom,
+            @Param("dateTo") LocalDate dateTo);
+
+    // Динамика по месяцам для конкретной ИППП-группы.
+    @Query("SELECT MONTH(dc.diagnosisDate), COUNT(dc) FROM DetectionCase dc " +
+            "JOIN dc.diagnosis d JOIN d.diagnosisGroup dg " +
+            "WHERE dc.diagnosisDate BETWEEN :dateFrom AND :dateTo " +
+            "AND dg.code = :groupCode " +
+            "GROUP BY MONTH(dc.diagnosisDate) " +
+            "ORDER BY MONTH(dc.diagnosisDate)")
+    List<Object[]> countByMonthForGroupBetween(
+            @Param("dateFrom") LocalDate dateFrom,
+            @Param("dateTo") LocalDate dateTo,
+            @Param("groupCode") String groupCode);
+
+    @Query("SELECT DISTINCT YEAR(dc.diagnosisDate) FROM DetectionCase dc " +
+            "ORDER BY YEAR(dc.diagnosisDate) DESC")
+    List<Integer> findDistinctYears();
 }
